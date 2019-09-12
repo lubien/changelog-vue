@@ -7,27 +7,11 @@
         <h2 class="changelog-item-version">{{ release.version }}</h2>
         <code class="changelog-item-date">{{ release.date }}</code>
         <ul class="changelog-item-entries">
-          <li v-for="(entry, j) in release.entries" :key="j" class="changelog-item-entry">
-            {{ entry.title }}
-            <a
-              href="#"
-              v-if="entry.reference"
-              class="changelog-item-entry-ref"
-            >#{{ entry.reference }}</a>
-            <a href="#" v-if="entry.author">@{{ entry.author }}</a>
-
-            <ul class="changelog-item-entries">
-              <li v-for="(entry, k) in entry.entries" :key="k" class="changelog-item-entry">
-                <span>{{ entry.title }}</span>
-                <a
-                  href="#"
-                  v-if="entry.reference"
-                  class="changelog-item-entry-ref"
-                >#{{ entry.reference }}</a>
-                <a href="#" v-if="entry.author">@{{ entry.author }}</a>
-              </li>
-            </ul>
-          </li>
+          <VChangelogEntry v-for="(entry, j) in release.entries" :key="j" :entry="entry">
+            <template slot="entries" v-if="entry.entries">
+              <VChangelogEntry v-for="(entry, k) in entry.entries" :key="k" :entry="entry"/>
+            </template>
+          </VChangelogEntry>
         </ul>
       </div>
     </li>
@@ -35,7 +19,10 @@
 </template>
 
 <script>
+import VChangelogEntry from "@/components/VChangelogEntry";
+
 export default {
+  components: { VChangelogEntry },
   props: {
     changelog: {
       type: Array,
